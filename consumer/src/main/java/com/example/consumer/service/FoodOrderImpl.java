@@ -18,8 +18,8 @@ public class FoodOrderImpl implements FoodOrderService{
 
   @Override
   public void persistFoodOrder(FoodOrderDto foodOrder) {
-    FoodOrderEntity foodOrderEntity = modelMapper.map(foodOrder, FoodOrderEntity.class);
-    FoodOrderEntity saved = foodOrderRepository.save(foodOrderEntity);
+    var foodOrderEntity = modelMapper.map(foodOrder, FoodOrderEntity.class);
+    var saved = foodOrderRepository.save(foodOrderEntity);
 
     log.info("saved order {}", saved);
   }

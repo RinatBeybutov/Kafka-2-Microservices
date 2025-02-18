@@ -1,6 +1,6 @@
 package com.producer.service;
 
-import com.producer.model.FoodOrder;
+import com.producer.model.FoodOrderDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ public class FoodOrderImpl implements FoodOrderService{
   private final Producer producer;
 
   @Override
-  public String createFoodOrder(FoodOrder foodOrder) {
-    return producer.sendMessage(foodOrder);
+  public String createFoodOrder(FoodOrderDto foodOrderDto) {
+    return producer.sendMessage(foodOrderDto);
   }
 }

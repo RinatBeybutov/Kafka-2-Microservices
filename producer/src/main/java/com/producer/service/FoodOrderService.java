@@ -1,8 +1,8 @@
 package com.producer.service;
 
-import com.producer.model.FoodOrder;
+import com.producer.model.FoodOrderDto;
 
 public interface FoodOrderService {
 
-  String createFoodOrder(FoodOrder foodOrder);
+  String createFoodOrder(FoodOrderDto foodOrderDto);
 }

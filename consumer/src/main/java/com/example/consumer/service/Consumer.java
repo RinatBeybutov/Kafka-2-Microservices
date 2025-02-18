@@ -21,6 +21,7 @@ public class Consumer {
   public void consumeMessage(String message) {
     log.info("message consumed {}", message);
     try {
+      // Преобразование строки в java объект
       FoodOrderDto foodOrder = objectMapper.readValue(message, FoodOrderDto.class);
       foodOrderService.persistFoodOrder(foodOrder);
     } catch (JsonProcessingException e) {

@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Data
 @Value
-public class FoodOrder {
+public class FoodOrderDto {
   String item;
   Double amount;
 }

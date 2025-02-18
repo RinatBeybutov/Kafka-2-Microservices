@@ -1,6 +1,7 @@
 package com.producer.config;
 
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -12,18 +13,14 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
 @Configuration
+@RequiredArgsConstructor
 public class KafkaConfig {
 
   private final KafkaProperties kafkaProperties;
 
-  @Autowired
-  public KafkaConfig(KafkaProperties kafkaProperties) {
-    this.kafkaProperties = kafkaProperties;
-  }
-
   @Bean
   public ProducerFactory<String, String> producerFactory() {
-    Map<String, Object> properties = kafkaProperties.buildProducerProperties();
+    Map<String, Object> properties = kafkaProperties.buildProducerProperties(null);
     return new DefaultKafkaProducerFactory<>(properties);
   }
 
@@ -40,6 +37,4 @@ public class KafkaConfig {
         .replicas(1)
         .build();
   }
-
-
 }
