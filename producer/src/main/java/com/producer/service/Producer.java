@@ -21,7 +21,7 @@ public class Producer {
   private final ObjectMapper objectMapper;
   private final KafkaTemplate<String, String> kafkaTemplate;
 
-  public String sendMessage(FoodOrderDto foodOrderDto) {
+  public void sendMessage(FoodOrderDto foodOrderDto) {
     try {
       // Преобразование ДТО в строку для отправки
       String orderAsMessage = objectMapper.writeValueAsString(foodOrderDto);
@@ -29,9 +29,9 @@ public class Producer {
       kafkaTemplate.send(orderTopic, orderAsMessage);
       log.info("send order {}", orderAsMessage);
     } catch (JsonProcessingException e) {
-      return "error parsing food order";
+      log.error("Error sending message to Kafka", e);
+      throw new RuntimeException("Error sending message to Kafka");
     }
-    return "sent!";
   }
 
 }

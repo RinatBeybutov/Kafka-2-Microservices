@@ -1,0 +1,25 @@
+@startuml
+
+skinparam componentStyle rectangle
+!theme mars
+
+rectangle "Producer" {
+  [swagger]
+  [p.backend]
+}
+
+rectangle "Consumer" {
+  database "H2"
+  [c.backend]
+}
+
+rectangle "Kafka" {
+  queue "kafka"
+}
+
+[swagger] -d-> [p.backend] : DTO
+[p.backend] -r-> "kafka" : JSON
+"kafka" <-l- [c.backend] : JSON
+[c.backend] -d-> "H2" : ENTITY
+
+@enduml

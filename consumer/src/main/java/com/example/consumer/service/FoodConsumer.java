@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class Consumer {
+public class FoodConsumer {
 
   private static final String orderTopic = "${topic.name}";
   private final ObjectMapper objectMapper;
@@ -22,11 +22,10 @@ public class Consumer {
     log.info("message consumed {}", message);
     try {
       // Преобразование строки в java объект
-      FoodOrderDto foodOrder = objectMapper.readValue(message, FoodOrderDto.class);
-      foodOrderService.persistFoodOrder(foodOrder);
+      var foodOrder = objectMapper.readValue(message, FoodOrderDto.class);
+      foodOrderService.saveFoodOrder(foodOrder);
     } catch (JsonProcessingException e) {
       log.error("Error parsing message {}", message);
     }
-
   }
 }
