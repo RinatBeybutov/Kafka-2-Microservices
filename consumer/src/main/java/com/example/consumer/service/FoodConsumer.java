@@ -14,18 +14,12 @@ import org.springframework.stereotype.Component;
 public class FoodConsumer {
 
   private static final String orderTopic = "${topic.name}";
-  private final ObjectMapper objectMapper;
+
   private final FoodOrderService foodOrderService;
 
-  @KafkaListener(topics = orderTopic)
-  public void consumeMessage(String message) {
-    log.info("message consumed {}", message);
-    try {
-      // Преобразование строки в java объект
-      var foodOrder = objectMapper.readValue(message, FoodOrderDto.class);
-      foodOrderService.saveFoodOrder(foodOrder);
-    } catch (JsonProcessingException e) {
-      log.error("Error parsing message {}", message);
-    }
+  @KafkaListener(topics = "#{orderTopic}")
+  public void consumeMessage(FoodOrderDto foodOrder) {
+    log.info("message consumed {}", foodOrder);
+    foodOrderService.saveFoodOrder(foodOrder);
   }
 }

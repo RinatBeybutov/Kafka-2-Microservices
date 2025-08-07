@@ -1,13 +1,12 @@
 package com.producer.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.producer.model.FoodOrderDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -18,20 +17,23 @@ public class Producer {
   @Value("${topic.name}")
   private String orderTopic;
 
-  private final ObjectMapper objectMapper;
-  private final KafkaTemplate<String, String> kafkaTemplate;
+  private final KafkaTemplate<String, FoodOrderDto> kafkaTemplate;
 
-  public void sendMessage(FoodOrderDto foodOrderDto) {
-    try {
-      // Преобразование ДТО в строку для отправки
-      String orderAsMessage = objectMapper.writeValueAsString(foodOrderDto);
-      // Отправка сообщения в кафку
-      kafkaTemplate.send(orderTopic, orderAsMessage);
-      log.info("send order {}", orderAsMessage);
-    } catch (JsonProcessingException e) {
-      log.error("Error sending message to Kafka", e);
-      throw new RuntimeException("Error sending message to Kafka");
-    }
+  @Retryable(
+      retryFor = {Exception.class},
+      backoff = @Backoff(delay = 1000, multiplier = 2)
+  )
+  public void sendMessage(String key, FoodOrderDto foodOrderDto) {
+    // Отправка сообщения в кафку
+    var future = kafkaTemplate.send(orderTopic, key, foodOrderDto);
+    // Обработка результата отправки
+    future.whenComplete((result, throwable) -> {
+      if (throwable != null) {
+        log.error("Возникла ошибка при отправке в кафку {}", throwable.getMessage());
+      } else {
+        log.info("Успешная отправка сообщения {} с ключом {}", foodOrderDto, key);
+      }
+    });
   }
 
 }
